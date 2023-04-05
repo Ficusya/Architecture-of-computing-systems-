@@ -1,3 +1,3 @@
-# Architecture-of-computing-systems-
+# Architecture-of-computing-systems
 
 assembler i8086
