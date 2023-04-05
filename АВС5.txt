@@ -1,0 +1,33 @@
+; count amount of negatives in c <= A[i] <= d
+org 100h
+.Data
+N DW 5
+A DB 1,-2,3,-4,5
+.Code
+MOV CX, N
+MOV SI, OFFSET A
+MOV DX, 0
+LOOP_START:
+    MOV AL,[SI]
+    CMP AL,0
+    JG SKIP
+    CMP AL,9  ;d
+    JG SKIP
+    CMP AL,-9 ;c
+    JL SKIP
+    INC DX
+SKIP:
+    INC SI
+    LOOP LOOP_START
+MOV AX,DX
+OutInt proc
+    aam 
+    add ax,3030h 
+    mov dl,ah 
+    mov dh,al 
+    mov ah,02 
+    int 21h 
+    mov dl,dh 
+    int 21h
+OutInt endp
+ret

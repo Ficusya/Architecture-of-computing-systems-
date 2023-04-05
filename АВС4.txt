@@ -1,0 +1,74 @@
+.model small
+.stack 100h
+color equ 0Fh ;colour
+.code 
+ReadInt16       proc
+        xor bx,bx
+        xor cx,cx    
+        @@skip:
+                mov ah,00h
+                int 16h
+                mov dl,al
+                cmp al,'-'
+                je  @@sign
+                cmp al,'0'
+                jb  @@skip
+                cmp al,'9'
+                ja  @@skip
+        jmp     @@get_digit
+        @@sign:
+        mov bx,1
+        jmp @@putchar
+        @@do:
+                mov ah,00h
+                int 16h
+                mov dl,al
+                cmp al,0Dh     ; ENTER
+                je  @@break
+        @@get_digit:
+                sub al,'0'
+                jc @@do
+                cmp al,9+1
+                jnc @@do
+                xor ah,ah
+                shl cx,1       ;cx=cx*10
+                mov si,cx
+                shl cx,1
+                shl cx,1
+                add cx,si
+                add cx,ax      ;cx=cx+ax
+        @@putchar:
+                mov ah,02h
+                int 21h
+        jmp     @@do
+@@break:
+        mov ax,cx
+        test bx,bx
+        jz @@exit
+        neg  ax
+@@exit:
+        ret
+ReadInt16 endp
+
+start:
+    call ReadInt16
+    mov cx,ax 
+    mov ax,13h ;320x200 resolution
+    int 10h
+    mov ax,color*257
+    push 0A000h
+    pop es
+    mov di,100*320+160 ;start point - center
+a1: push cx
+    mov cx,10 ;width/2 (2 dots)
+    rep stosw ;draw line
+    add di,300;start line
+    pop cx
+    loop a1
+    mov ah,0 ;any key
+    int 16h  ;to completion
+    mov ax,3 ;recover text mode
+    int 10h
+    mov ah,4Ch
+    int 21h
+end start
