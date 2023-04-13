@@ -1,3 +1,5 @@
+;====WIP====
+
 ; count amount of negatives in c <= A[i] <= d
 org 100h
 .Data
