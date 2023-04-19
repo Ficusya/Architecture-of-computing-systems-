@@ -4,9 +4,9 @@
 org 100h
 .Data
 N DD 6
-A DD 12345678h,36000h,-100h,654321h,17000h,-35000h
-c DD -36000h
-d DD 36000h 
+A DD 12h,1234h,-12h,-1234h,-8765h,5678h
+c DD -9876h
+d DD 1234h 
 .Code
 mov cx,N
 mov dx,0
@@ -19,31 +19,28 @@ loop_start:
     mov bx, word ptr d+2
     cmp ax,bx
     jg skip
-    je equal_d 
+    je equal_d
     
     mov ax, word ptr [SI]+2
     mov bx, word ptr c+2
     cmp ax,bx
     jl skip
     je equal_c
+         
     inc dx    
 skip:
     add SI,4
     loop loop_start
-    
-equal_d PROC
-    mov ax, word ptr [SI]
+equal_d:
+    mov ax,word ptr [SI]
     mov bx, word ptr d
     cmp ax,bx
     jg skip
-equal_d endp
-
-equal_c PROC
+equal_c:
     mov ax, word ptr [SI]
     mov bx, word ptr c
     cmp ax,bx
-    jl skip
-equal_c endp
+    jg skip
 
 MOV AX,DX
 print       proc
